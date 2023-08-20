@@ -28,7 +28,7 @@ import com.trinks.R
 import kotlinx.coroutines.delay
 
 @Composable
-fun LoadingScreen(){
+fun JumpyScreen(){
 
     val context = LocalContext.current
 
