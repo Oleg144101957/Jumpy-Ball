@@ -1,5 +1,6 @@
 package com.trinks.ui.theme.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -27,6 +28,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -57,6 +62,8 @@ fun GameScreen(){
     val scores = remember {
         mutableStateOf(0)
     }
+
+
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -97,7 +104,11 @@ fun GameScreen(){
             contentDescription = "ball",
             modifier = Modifier
                 .size(ballDiameter)
-                .offset(x = ballX, y = ballY),
+                .offset(x = ballX, y = ballY)
+                .onGloballyPositioned {
+                      Log.d("123123", "ball global root ${it.positionInRoot()}")
+                }
+            ,
         )
 
         Image(
@@ -115,6 +126,11 @@ fun GameScreen(){
                         change.consume()
                         offsetXBase.value += dragAmount.x
                     }
+                }
+                .onGloballyPositioned {
+                    Log.d("123123", "position in parent ${it.positionInParent()}")
+                    Log.d("123123", "position in root ${it.positionInRoot()}")
+                    Log.d("123123", "position in window ${it.positionInWindow()}")
                 }
         )
 
