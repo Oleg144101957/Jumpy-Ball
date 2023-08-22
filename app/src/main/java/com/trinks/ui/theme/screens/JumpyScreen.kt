@@ -1,5 +1,7 @@
 package com.trinks.ui.theme.screens
 
+import android.app.Activity
+import android.content.pm.ActivityInfo
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -29,6 +31,9 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun JumpyScreen(){
+
+    val a = LocalContext.current as Activity
+    a.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
     val context = LocalContext.current
 

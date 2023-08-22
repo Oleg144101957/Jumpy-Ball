@@ -1,5 +1,7 @@
 package com.trinks.ui.theme.screens
 
+import android.app.Activity
+import android.content.pm.ActivityInfo
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -37,6 +39,9 @@ import com.trinks.R
 
 @Composable
 fun MenuScreen(){
+
+    val a = LocalContext.current as Activity
+    a.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
     Box(modifier = Modifier.fillMaxSize()){
 

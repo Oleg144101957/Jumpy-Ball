@@ -1,5 +1,7 @@
 package com.trinks.ui.theme.screens
 
+import android.app.Activity
+import android.content.pm.ActivityInfo
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -34,6 +36,7 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -45,11 +48,24 @@ import kotlin.math.roundToInt
 @Composable
 fun GameScreen(){
 
+    val a = LocalContext.current as Activity
+    a.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
 
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
+    val density = LocalDensity.current
+
     val offsetXBase = remember { mutableStateOf(0f) }
+
+    var platformX by remember { mutableStateOf(0.dp) }
+    var platformXEnd by remember { mutableStateOf(0.dp) }
+    var platformY by remember { mutableStateOf(0.dp) }
+
+    var platformDelta by remember { mutableStateOf(platformXEnd-platformX) }
+    var platform1of3 by remember { mutableStateOf(platformDelta/3) }
+
 
     var ballX by remember { mutableStateOf(0.dp) }
     var ballY by remember { mutableStateOf(0.dp) }
@@ -61,6 +77,10 @@ fun GameScreen(){
 
     val scores = remember {
         mutableStateOf(0)
+    }
+
+    val isBallVisible = remember {
+        mutableStateOf(true)
     }
 
 
@@ -76,8 +96,26 @@ fun GameScreen(){
                 if (ballX <= 0.dp || ballX >= screenWidth - ballDiameter) {
                     xDirection *= -1
                 }
-                if (ballY <= 0.dp || ballY >= screenHeight - ballDiameter) {
+
+                if (ballY <= 0.dp) {
                     yDirection *= -1
+                }
+
+                if (ballY >= screenHeight - ballDiameter){
+                    isBallVisible.value = false
+                }
+
+                //Platform touch checking
+                if (ballX in platformX+platform1of3..platformXEnd-platform1of3 && ballY + ballDiameter in platformY..platformY+25.dp){
+                    yDirection *= -1
+                }
+
+                if (ballX in platformX-5.dp..platform1of3+5.dp && ballY + ballDiameter in platformY..platformY+25.dp){
+                    yDirection *= -2
+                }
+
+                if (ballX in platformXEnd-platform1of3-5.dp..platformXEnd+5.dp && ballY + ballDiameter in platformY..platformY+25.dp){
+                    yDirection *= -2
                 }
             }
         }
@@ -98,18 +136,18 @@ fun GameScreen(){
 
         PlayDecor(scores.value)
 
-
-        Image(
-            painter = painterResource(id = R.drawable.trinket),
-            contentDescription = "ball",
-            modifier = Modifier
-                .size(ballDiameter)
-                .offset(x = ballX, y = ballY)
-                .onGloballyPositioned {
-                      Log.d("123123", "ball global root ${it.positionInRoot()}")
-                }
-            ,
-        )
+        if (isBallVisible.value){
+            Image(
+                painter = painterResource(id = R.drawable.trinket),
+                contentDescription = "ball",
+                modifier = Modifier
+                    .size(ballDiameter)
+                    .offset(x = ballX, y = ballY)
+                    .onGloballyPositioned {
+                        Log.d("123123", "ball global root ${it.positionInRoot()}")
+                    }
+            )
+        }
 
         Image(
             painter = painterResource(id = R.drawable.bristle),
@@ -117,7 +155,7 @@ fun GameScreen(){
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(32.dp)
-                .scale(2f)
+                .scale(3f)
                 .offset {
                     IntOffset(x = offsetXBase.value.roundToInt(), y = 0)
                 }
@@ -128,12 +166,15 @@ fun GameScreen(){
                     }
                 }
                 .onGloballyPositioned {
-                    Log.d("123123", "position in parent ${it.positionInParent()}")
                     Log.d("123123", "position in root ${it.positionInRoot()}")
-                    Log.d("123123", "position in window ${it.positionInWindow()}")
+
+                    with(density) {
+                        platformX = it.positionInRoot().x.toDp()
+                        platformXEnd = it.positionInRoot().x.toDp() + it.size.width.toDp()
+                        platformY = it.positionInRoot().y.toDp()
+                    }
                 }
         )
-
     }
 }
 
