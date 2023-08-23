@@ -43,14 +43,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.trinks.NoNoActivity
 import com.trinks.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 @Composable
 fun GameScreen(){
-
-    val a = LocalContext.current as Activity
-    a.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
 
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
@@ -62,9 +61,6 @@ fun GameScreen(){
     var platformX by remember { mutableStateOf(0.dp) }
     var platformXEnd by remember { mutableStateOf(0.dp) }
     var platformY by remember { mutableStateOf(0.dp) }
-
-    var platformDelta by remember { mutableStateOf(platformXEnd-platformX) }
-    var platform1of3 by remember { mutableStateOf(platformDelta/3) }
 
 
     var ballX by remember { mutableStateOf(0.dp) }
@@ -84,7 +80,6 @@ fun GameScreen(){
     }
 
 
-
     LaunchedEffect(Unit) {
         while (true) {
             withFrameNanos { _ ->
@@ -92,31 +87,48 @@ fun GameScreen(){
                 ballX += ballSpeed * xDirection
                 ballY += ballSpeed * yDirection
 
-                // Check for collisions with screen boundaries and change direction
-                if (ballX <= 0.dp || ballX >= screenWidth - ballDiameter) {
+                //if y directio
+                //when if else Rect.f
+
+                Log.d("111111", "ballY $ballY ballX $ballX platformX $platformX platformY $platformY xDirection $xDirection yDirection $yDirection")
+
+
+//                if(abs(xDirection) > abs(yDirection)){
+//
+//                } else {
+//
+//                }
+
+
+                if (ballX in platformX..platformXEnd && ballY + ballDiameter > platformY){
+                    Log.d("111111", "платформа отскок")
+                    yDirection *= -1
+
+                } else if (ballX <= 0.dp || ballX >= screenWidth - ballDiameter) {
+                    Log.d("111111", "Сталкиваемся со стеной ")
                     xDirection *= -1
-                }
 
-                if (ballY <= 0.dp) {
+                } else if(ballY <= 0.dp){
+                    Log.d("111111", "сталкиваемся с потолком")
                     yDirection *= -1
-                }
 
-                if (ballY >= screenHeight - ballDiameter){
+                } else if (ballY >= screenHeight - ballDiameter){
+                    Log.d("111111", "соприкосновение с полом")
                     isBallVisible.value = false
+
+                } else {
+                    Log.d("111111", "else")
                 }
 
-                //Platform touch checking
-                if (ballX in platformX+platform1of3..platformXEnd-platform1of3 && ballY + ballDiameter in platformY..platformY+25.dp){
-                    yDirection *= -1
-                }
 
-                if (ballX in platformX-5.dp..platform1of3+5.dp && ballY + ballDiameter in platformY..platformY+25.dp){
-                    yDirection *= -2
-                }
 
-                if (ballX in platformXEnd-platform1of3-5.dp..platformXEnd+5.dp && ballY + ballDiameter in platformY..platformY+25.dp){
-                    yDirection *= -2
-                }
+//                if (ballX in platformX-5.dp..platform1of3+5.dp && ballY + ballDiameter in platformY..platformY+5.dp){
+//                    yDirection *= -2
+//                }
+//
+//                if (ballX in platformXEnd-platform1of3-5.dp..platformXEnd+5.dp && ballY + ballDiameter in platformY..platformY+5.dp){
+//                    yDirection *= -2
+//                }
             }
         }
     }
@@ -144,7 +156,7 @@ fun GameScreen(){
                     .size(ballDiameter)
                     .offset(x = ballX, y = ballY)
                     .onGloballyPositioned {
-                        Log.d("123123", "ball global root ${it.positionInRoot()}")
+
                     }
             )
         }
@@ -153,9 +165,9 @@ fun GameScreen(){
             painter = painterResource(id = R.drawable.bristle),
             contentDescription = "movable base element",
             modifier = Modifier
+                .scale(3f)
                 .align(Alignment.BottomCenter)
                 .padding(32.dp)
-                .scale(3f)
                 .offset {
                     IntOffset(x = offsetXBase.value.roundToInt(), y = 0)
                 }
@@ -166,8 +178,6 @@ fun GameScreen(){
                     }
                 }
                 .onGloballyPositioned {
-                    Log.d("123123", "position in root ${it.positionInRoot()}")
-
                     with(density) {
                         platformX = it.positionInRoot().x.toDp()
                         platformXEnd = it.positionInRoot().x.toDp() + it.size.width.toDp()
