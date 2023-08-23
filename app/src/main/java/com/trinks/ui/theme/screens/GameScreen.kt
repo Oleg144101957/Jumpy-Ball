@@ -63,8 +63,8 @@ fun GameScreen(){
     var platformY by remember { mutableStateOf(0.dp) }
 
 
-    var ballX by remember { mutableStateOf(0.dp) }
-    var ballY by remember { mutableStateOf(0.dp) }
+    var ballX by remember { mutableStateOf(1.dp) }
+    var ballY by remember { mutableStateOf(1.dp) }
     var xDirection by remember { mutableStateOf(1) } // 1 - to the right, -1 - to the left
     var yDirection by remember { mutableStateOf(1) } // 1 - downwards, -1 - upwards
 
@@ -79,56 +79,25 @@ fun GameScreen(){
         mutableStateOf(true)
     }
 
-
     LaunchedEffect(Unit) {
         while (true) {
             withFrameNanos { _ ->
+
+                if (ballX > platformX && ballX < platformXEnd && ballY + ballDiameter > platformY - 16.dp) {
+                    yDirection *= -1
+                } else if (ballX <= 0.dp || ballX >= screenWidth - ballDiameter) {
+                    xDirection *= -1
+                }
+                else if(ballY <= 0.dp) {
+                    yDirection *= -1
+                }
+                else if (ballY >= screenHeight - ballDiameter) {
+                    isBallVisible.value = false
+                }
+
                 // Update ball position
                 ballX += ballSpeed * xDirection
                 ballY += ballSpeed * yDirection
-
-                //if y directio
-                //when if else Rect.f
-
-                Log.d("111111", "ballY $ballY ballX $ballX platformX $platformX platformY $platformY xDirection $xDirection yDirection $yDirection")
-
-
-//                if(abs(xDirection) > abs(yDirection)){
-//
-//                } else {
-//
-//                }
-
-
-                if (ballX in platformX..platformXEnd && ballY + ballDiameter > platformY){
-                    Log.d("111111", "платформа отскок")
-                    yDirection *= -1
-
-                } else if (ballX <= 0.dp || ballX >= screenWidth - ballDiameter) {
-                    Log.d("111111", "Сталкиваемся со стеной ")
-                    xDirection *= -1
-
-                } else if(ballY <= 0.dp){
-                    Log.d("111111", "сталкиваемся с потолком")
-                    yDirection *= -1
-
-                } else if (ballY >= screenHeight - ballDiameter){
-                    Log.d("111111", "соприкосновение с полом")
-                    isBallVisible.value = false
-
-                } else {
-                    Log.d("111111", "else")
-                }
-
-
-
-//                if (ballX in platformX-5.dp..platform1of3+5.dp && ballY + ballDiameter in platformY..platformY+5.dp){
-//                    yDirection *= -2
-//                }
-//
-//                if (ballX in platformXEnd-platform1of3-5.dp..platformXEnd+5.dp && ballY + ballDiameter in platformY..platformY+5.dp){
-//                    yDirection *= -2
-//                }
             }
         }
     }
@@ -180,7 +149,7 @@ fun GameScreen(){
                 .onGloballyPositioned {
                     with(density) {
                         platformX = it.positionInRoot().x.toDp()
-                        platformXEnd = it.positionInRoot().x.toDp() + it.size.width.toDp()
+                        platformXEnd = platformX + ((it.size.width * 3).toDp())
                         platformY = it.positionInRoot().y.toDp()
                     }
                 }
