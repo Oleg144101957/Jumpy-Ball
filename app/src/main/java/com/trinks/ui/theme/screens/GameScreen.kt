@@ -136,46 +136,45 @@ fun GameScreen(){
 
                     if (ballX in unmovableX1..unmovableXEnd1 && ballY + ballDiameter in unmovableY1..unmovableYEnd1){
                         Log.d("123123", "Top wall left part collision with element 1 ballX is $ballX ballY is $ballY unmovableX1 $unmovableX1 unmovableY1 $unmovableY1 unmovableXEnd1 $unmovableXEnd1 unmovableYEnd1 $unmovableYEnd1")
-                        ballY = unmovableY1 - 5.dp
-                        ballX += 10.dp
+//                        ballY = unmovableY1 - 5.dp
+//                        ballX += 10.dp
                         yDirection *= -1
                     } else if (ballX + ballDiameter in unmovableX1 .. unmovableXEnd1 && ballY + ballDiameter in unmovableY1 .. unmovableYEnd1){
                         Log.d("123123", "Top wall right collision with element 1 ballX is $ballX ballY is $ballY unmovableX1 $unmovableX1 unmovableY1 $unmovableY1 unmovableXEnd1 $unmovableXEnd1 unmovableYEnd1 $unmovableYEnd1")
-                        ballY = unmovableY1 - 5.dp
-                        ballX -= 10.dp
+//                        ballY = unmovableY1 - 5.dp
+//                        ballX -= 10.dp
                         yDirection *= -1
                     } else if(ballX in unmovableXEnd1..unmovableX1 && ballY in unmovableY1..unmovableYEnd1){
                         Log.d("123123", "Right wall top part collision with element 1 ballX is $ballX ballY is $ballY unmovableX1 $unmovableX1 unmovableY1 $unmovableY1 unmovableXEnd1 $unmovableXEnd1 unmovableYEnd1 $unmovableYEnd1")
-                        ballX = unmovableXEnd1 + 5.dp
-                        ballY -= 10.dp
+//                        ballX = unmovableXEnd1 + 5.dp
+//                        ballY -= 10.dp
                         xDirection *= -1
                     } else if (ballX in unmovableXEnd1..unmovableX1 && ballY + ballDiameter in unmovableY1..unmovableYEnd1){
                         Log.d("123123", "Right wall bottom part collision with element 1 ballX is $ballX ballY is $ballY unmovableX1 $unmovableX1 unmovableY1 $unmovableY1 unmovableXEnd1 $unmovableXEnd1 unmovableYEnd1 $unmovableYEnd1")
-                        ballX = unmovableXEnd1 + 5.dp
-                        ballY += 10.dp
+//                        ballX = unmovableXEnd1 + 5.dp
+//                        ballY += 10.dp
                         xDirection *= -1
                     } else if (ballX in unmovableX1..unmovableXEnd1 && ballY in unmovableYEnd1..unmovableY1){
                         Log.d("123123", "Bottom wall left part collision with element 1 ballX is $ballX ballY is $ballY unmovableX1 $unmovableX1 unmovableY1 $unmovableY1 unmovableXEnd1 $unmovableXEnd1 unmovableYEnd1 $unmovableYEnd1")
-                        ballY = unmovableYEnd1 + 5.dp
-                        ballX += 10.dp
+//                        ballY = unmovableYEnd1 + 5.dp
+//                        ballX += 10.dp
                         yDirection *= -1
                     } else if (ballX + ballDiameter in unmovableX1..unmovableXEnd1 && ballY in unmovableYEnd1..unmovableY1){
                         Log.d("123123", "Bottom wall right part collision with element 1 ballX is $ballX ballY is $ballY unmovableX1 $unmovableX1 unmovableY1 $unmovableY1 unmovableXEnd1 $unmovableXEnd1 unmovableYEnd1 $unmovableYEnd1")
-                        ballY = unmovableYEnd1 + 5.dp
-                        ballX -= 10.dp
+//                        ballY = unmovableYEnd1 + 5.dp
+//                        ballX -= 10.dp
                         yDirection *= -1
                     } else if (ballX + ballDiameter in unmovableX1..unmovableXEnd1 && ballY in unmovableY1..unmovableYEnd1){
                         Log.d("123123", "Left wall top part collision with element 1 ballX is $ballX ballY is $ballY unmovableX1 $unmovableX1 unmovableY1 $unmovableY1 unmovableXEnd1 $unmovableXEnd1 unmovableYEnd1 $unmovableYEnd1")
-                        ballX = unmovableX1 - 25.dp
-                        ballY -= 10.dp
+//                        ballX = unmovableX1 - 25.dp
+//                        ballY -= 10.dp
                         xDirection *= -1
                     } else if(ballX + ballDiameter in unmovableX1..unmovableXEnd1 && ballY + ballDiameter in unmovableY1..unmovableYEnd1){
                         Log.d("123123", "Left wall bottom part collision with element 1 ballX is $ballX ballY is $ballY unmovableX1 $unmovableX1 unmovableY1 $unmovableY1 unmovableXEnd1 $unmovableXEnd1 unmovableYEnd1 $unmovableYEnd1" )
-                        ballX = unmovableX1 + 25.dp
-                        ballY += 10.dp
+//                        ballX = unmovableX1 - 25.dp
+//                        ballY += 10.dp
                         xDirection *= -1
                     }
-
 
 
 
