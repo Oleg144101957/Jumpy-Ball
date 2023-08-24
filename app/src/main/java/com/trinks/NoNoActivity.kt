@@ -3,7 +3,6 @@ package com.trinks
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.trinks.ui.theme.screens.GameScreen
