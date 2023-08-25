@@ -1,5 +1,8 @@
 package com.trinks.ui.theme.screens
 
+import android.app.Activity
+import android.content.Context
+import android.content.pm.ActivityInfo
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -68,10 +71,20 @@ data class Obstacle(
 fun GameScreen(
 ) {
 
+
+    val a = LocalContext.current as Activity
+    a.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
+    val context = LocalContext.current
+
     val density = LocalDensity.current
+
+    val isOver = remember {
+        mutableStateOf(false)
+    }
 
     val offsetXBaseInDp = remember { mutableStateOf(0.dp) }
     val random = remember { Random(System.currentTimeMillis()) }
@@ -81,19 +94,6 @@ fun GameScreen(
     var xDirection by remember { mutableStateOf(1) } // 1 - to the right, -1 - to the left
     var yDirection by remember { mutableStateOf(1) } // 1 - downwards, -1 - upwards
 
-
-
-    //unmovable element 1
-    var unmovableX1 by remember { mutableStateOf(1.dp) } //top left corner X
-    var unmovableXEnd1 by remember { mutableStateOf(1.dp) } //top right corner X
-    var unmovableY1 by remember { mutableStateOf(1.dp) } //top left Y
-    var unmovableYEnd1 by remember { mutableStateOf(1.dp) } //bottom left Y
-
-    //unmovable element 2
-    var unmovableX2 by remember { mutableStateOf(1.dp) } //top left corner X
-    var unmovableXEnd2 by remember { mutableStateOf(1.dp) } //top right corner X
-    var unmovableY2 by remember { mutableStateOf(1.dp) } //top left Y
-    var unmovableYEnd2 by remember { mutableStateOf(1.dp) } //bottom left Y
 
     val ballDiameter = 50.dp
     var ballSpeed by remember {
@@ -108,27 +108,20 @@ fun GameScreen(
         mutableStateOf(true)
     }
 
-    val isVisibleElement1 = remember {
-        mutableStateOf(true)
-    }
-
-    val isVisibleElement2 = remember {
-        mutableStateOf(true)
-    }
-
     val platform = remember { mutableStateOf(Obstacle.zero) }
 
     val obstacles = remember {
         mutableStateListOf<Obstacle>()
     }
+
     LaunchedEffect(Unit) {
 
 
-        repeat(7) {
+        repeat(5) {
             obstacles.add(
                 Obstacle(
                     x = random.nextInt(0, (screenWidth - 50.dp).value.toInt()).dp,
-                    y = random.nextInt(0, (screenHeight - 50.dp).value.toInt()).dp,
+                    y = random.nextInt(64, (screenHeight - 70.dp).value.toInt()).dp,
                     width = 50.dp,
                     height = 50.dp
                 )
@@ -141,11 +134,12 @@ fun GameScreen(
                     y + ballDiameter >= obstacle.y &&
                     y <= obstacle.y + obstacle.height
         }
-    var f = true
+
         while (true) {
             withFrameNanos { _ ->
                 if (ballY + ballDiameter >= screenHeight) {
                     isBallVisibleBall.value = false
+                    isOver.value = true
                 } else if (check(ballX, ballY, platform.value)) {
                     ballY = platform.value.y - ballDiameter
                     yDirection *= -1
@@ -165,7 +159,7 @@ fun GameScreen(
 
                         val obstacle = Obstacle(
                             x = random.nextInt(0, (screenWidth - 50.dp).value.toInt()).dp,
-                            y = random.nextInt(0, (screenHeight - 50.dp).value.toInt()).dp,
+                            y = random.nextInt(64, (screenHeight - 70.dp).value.toInt()).dp,
                             width = 50.dp,
                             height = 50.dp
                         )
@@ -210,41 +204,6 @@ fun GameScreen(
             )
         }
 
-//        if (isVisibleElement1.value){
-//            Image(
-//                painter = painterResource(id = R.drawable.spiral),
-//                contentDescription = "unmovable elemnt 1",
-//                modifier = Modifier
-//                    .align(Alignment.Center)
-//                    .onGloballyPositioned {
-//                        with(density) {
-//                            unmovableX1 = it.positionInRoot().x.toDp()
-//                            unmovableY1 = it.positionInRoot().y.toDp()
-//                            unmovableXEnd1 = unmovableX1 + it.size.width.toDp()
-//                            unmovableYEnd1 = unmovableY1 + it.size.height.toDp()
-//                        }
-//                    }
-//            )
-//        }
-
-//        if (isVisibleElement2.value){
-//            Image(
-//                painter = painterResource(id = R.drawable.mosaic),
-//                contentDescription = "unmovable elemnt 2",
-//                modifier = Modifier
-//                    .align(Alignment.Center)
-//                    .fillMaxWidth(0.07f)
-//                    .offset(y = (-50).dp, x = (-32).dp)
-//                    .onGloballyPositioned {
-//                        with(density) {
-//                            unmovableX2 = it.positionInRoot().x.toDp()
-//                            unmovableY2 = it.positionInRoot().y.toDp()
-//                            unmovableXEnd2 = unmovableX1 + it.size.width.toDp()
-//                            unmovableYEnd2 = unmovableY1 + it.size.height.toDp()
-//                        }
-//                    }
-//            )
-//        }
 
         Image(
             painter = painterResource(id = R.drawable.bristle),
@@ -254,8 +213,6 @@ fun GameScreen(
                 .padding(32.dp)
                 .aspectRatio(3.8f)
                 .align(Alignment.BottomCenter)
-                .background(Color.Red)
-                .background(Color.Green)
                 .offset(x = offsetXBaseInDp.value)
                 .pointerInput(Unit) {
                     detectDragGestures { change, dragAmount ->
@@ -286,6 +243,42 @@ fun GameScreen(
                     .background(Color.Blue)
             )
         }
+
+        if (isOver.value){
+            GameOverScreen(context)
+        }
+    }
+}
+
+
+@Composable
+fun BoxScope.GameOverScreen(context: Context){
+
+    Box(modifier = Modifier
+        .background(Color.Black)
+        .fillMaxSize()
+    ){
+
+        Text(
+            text = "Game over !!!",
+            color = Color.White,
+            fontSize = 48.sp,
+            modifier = Modifier
+                .align(Alignment.Center)
+        )
+
+        Icon(
+            imageVector = Icons.Rounded.ExitToApp,
+            contentDescription = "close",
+            tint = Color.White,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(32.dp)
+                .clickable {
+                    NoNoActivity.navigateToMenuActivity(context)
+                }
+        )
+
     }
 }
 
